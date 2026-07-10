@@ -28,7 +28,7 @@ function MapView() {
             type: "raster",
 
             tiles: [
-              "https://a.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png"
+              "https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}.png"
             ],
 
             tileSize: 256,
