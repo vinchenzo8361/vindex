@@ -1,3 +1,5 @@
+import MapView from "./components/MapView";
+
 function App() {
   return (
     <div className="app">
@@ -125,9 +127,7 @@ function App() {
         {/* MAP */}
         <section className="map-panel">
 
-          <div className="map-placeholder">
-            MAP
-          </div>
+          <MapView />
 
         </section>
 
