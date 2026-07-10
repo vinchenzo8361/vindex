@@ -16,14 +16,56 @@ function MapView() {
 
       container: mapContainer.current,
 
-      style:
-        "https://demotiles.maplibre.org/style.json",
 
+      style: {
+
+        version: 8,
+
+        sources: {
+
+          osm: {
+
+            type: "raster",
+
+            tiles: [
+              "https://a.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png"
+            ],
+
+            tileSize: 256,
+
+            attribution:
+              "© OpenStreetMap contributors"
+
+          }
+
+        },
+
+
+        layers: [
+
+          {
+
+            id: "osm",
+
+            type: "raster",
+
+            source: "osm"
+
+          }
+
+        ]
+
+      },
+
+
+      // Brampton Civic Hospital area
       center: [-79.7624, 43.7315],
+
 
       zoom: 11,
 
     });
+
 
 
     map.addControl(
@@ -32,22 +74,32 @@ function MapView() {
     );
 
 
+
     return () => {
+
       map.remove();
+
     };
 
 
   }, []);
 
 
+
   return (
 
     <div
+
       ref={mapContainer}
+
       style={{
-        width:"100%",
-        height:"100%",
+
+        width: "100%",
+
+        height: "100%",
+
       }}
+
     />
 
   );
