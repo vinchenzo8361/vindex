@@ -182,3 +182,8 @@
     border-right-color: var(--border);
   }
 }
+
+.map-panel {
+  padding: 14px;
+  height: 100%;
+}
