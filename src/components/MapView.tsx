@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import * as maplibregl from "maplibre-gl";
 import { setWorkerUrl } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
@@ -12,14 +12,18 @@ setWorkerUrl(
 );
 
 
+
 function MapView() {
 
 
-  const mapContainer = useRef<HTMLDivElement | null>(null);
+  const mapContainer =
+    useRef<HTMLDivElement | null>(null);
 
 
-  const [incidentMarker, setIncidentMarker] =
-    useState<maplibregl.Marker | null>(null);
+
+  const incidentMarker =
+    useRef<maplibregl.Marker | null>(null);
+
 
 
 
@@ -35,65 +39,39 @@ function MapView() {
       container: mapContainer.current,
 
 
-      style: {
-
-        version: 8,
-
-
-        sources: {
-
-          osm: {
-
-            type: "raster",
-
-            tiles: [
-              "https://tile.openstreetmap.org/{z}/{x}/{y}.png"
-          ],
-
-            tileSize: 256,
-
-          }
-
-        },
-
-
-        layers: [
-
-          {
-
-            id: "osm",
-
-            type: "raster",
-
-            source: "osm"
-
-          }
-
-        ]
-
-      },
+      style:
+        "https://tiles.openfreemap.org/styles/dark",
 
 
       center: [-79.7624, 43.7315],
 
-      zoom: 11,
 
+      zoom: 11,
 
     });
 
 
 
+
     map.addControl(
+
       new maplibregl.NavigationControl(),
+
       "top-left"
+
     );
 
 
 
 
+
+    // ==========================
     // HOSPITAL MARKERS
+    // ==========================
+
 
     hospitals.forEach((hospital) => {
+
 
 
       const markerElement =
@@ -108,9 +86,13 @@ function MapView() {
       markerElement.style.borderRadius = "8px";
 
 
+
       markerElement.style.backgroundColor =
+
         hospital.id === "brampton-civic"
+
           ? "#C83A3A"
+
           : "#3E8BFF";
 
 
@@ -119,7 +101,9 @@ function MapView() {
         "2px solid white";
 
 
+
       markerElement.innerHTML = "H";
+
 
 
       markerElement.style.color = "white";
@@ -127,6 +111,7 @@ function MapView() {
       markerElement.style.fontWeight = "bold";
 
       markerElement.style.fontSize = "20px";
+
 
 
       markerElement.style.display = "flex";
@@ -138,34 +123,38 @@ function MapView() {
 
 
 
-      const popup = new maplibregl.Popup({
 
-        offset: 25
+      const popup =
 
-      })
+        new maplibregl.Popup({
 
-      .setHTML(`
+          offset: 25
 
-        <div style="
-          color:#111827;
-          font-family:Arial;
-        ">
+        })
 
-        <strong>
-          ${hospital.name}
-        </strong>
+        .setHTML(`
 
-        <br/>
+          <div style="
+            color:#111827;
+            font-family:Arial;
+          ">
 
-        ${hospital.address}
+            <strong>
+              ${hospital.name}
+            </strong>
 
-        <br/>
+            <br/>
 
-        Emergency Department: Yes
+            ${hospital.address}
 
-        </div>
+            <br/>
 
-      `);
+            Emergency Department: Yes
+
+          </div>
+
+        `);
+
 
 
 
@@ -188,6 +177,7 @@ function MapView() {
       .addTo(map);
 
 
+
     });
 
 
@@ -195,7 +185,10 @@ function MapView() {
 
 
 
+    // ==========================
     // AMBULANCE MARKER
+    // ==========================
+
 
 
     const ambulanceElement =
@@ -208,16 +201,20 @@ function MapView() {
     ambulanceElement.style.height = "30px";
 
 
+
     ambulanceElement.style.backgroundColor =
       "white";
+
 
 
     ambulanceElement.style.border =
       "2px solid #C83A3A";
 
 
+
     ambulanceElement.style.borderRadius =
       "6px";
+
 
 
     ambulanceElement.innerHTML =
@@ -230,10 +227,13 @@ function MapView() {
 
 
 
+
+
     const ambulancePopup =
+
       new maplibregl.Popup({
 
-        offset: 25
+        offset:25
 
       })
 
@@ -244,17 +244,18 @@ function MapView() {
           font-family:Arial;
         ">
 
-        <strong>
-          Vindex Ambulance 01
-        </strong>
+          <strong>
+            Vindex Ambulance 01
+          </strong>
 
-        <br/>
+          <br/>
 
-        Status: Idle
+          Status: Idle
 
         </div>
 
       `);
+
 
 
 
@@ -283,18 +284,26 @@ function MapView() {
 
 
 
-    // INCIDENT PLACEMENT
+
+    // ==========================
+    // SINGLE INCIDENT MARKER
+    // ==========================
+
 
 
     map.on("click", (event) => {
 
 
 
-      if (incidentMarker) {
+      // Remove old incident
 
-        incidentMarker.remove();
+      if (incidentMarker.current) {
+
+        incidentMarker.current.remove();
 
       }
+
+
 
 
 
@@ -303,17 +312,24 @@ function MapView() {
 
 
 
-      incidentElement.style.width = "32px";
+      incidentElement.style.width =
+        "34px";
 
-      incidentElement.style.height = "32px";
+
+
+      incidentElement.style.height =
+        "34px";
+
 
 
       incidentElement.style.backgroundColor =
         "#C83A3A";
 
 
+
       incidentElement.style.border =
         "3px solid white";
+
 
 
       incidentElement.style.borderRadius =
@@ -321,7 +337,8 @@ function MapView() {
 
 
 
-      incidentElement.innerHTML = "!";
+      incidentElement.innerHTML =
+        "!";
 
 
 
@@ -329,16 +346,25 @@ function MapView() {
         "white";
 
 
+
       incidentElement.style.fontWeight =
         "bold";
+
+
+
+      incidentElement.style.fontSize =
+        "22px";
+
 
 
       incidentElement.style.display =
         "flex";
 
 
+
       incidentElement.style.alignItems =
         "center";
+
 
 
       incidentElement.style.justifyContent =
@@ -347,7 +373,10 @@ function MapView() {
 
 
 
-      const marker =
+
+
+      const newIncident =
+
         new maplibregl.Marker({
 
           element: incidentElement
@@ -360,13 +389,28 @@ function MapView() {
 
           new maplibregl.Popup({
 
-            offset: 25
+            offset:25
 
           })
 
-          .setText(
-            "Emergency Incident"
-          )
+          .setHTML(`
+
+            <div style="
+              color:#111827;
+              font-family:Arial;
+            ">
+
+              <strong>
+                Emergency Incident
+              </strong>
+
+              <br/>
+
+              Selected Location
+
+            </div>
+
+          `)
 
         )
 
@@ -374,11 +418,14 @@ function MapView() {
 
 
 
-      setIncidentMarker(marker);
+
+      incidentMarker.current =
+        newIncident;
 
 
 
     });
+
 
 
 
@@ -398,6 +445,7 @@ function MapView() {
 
 
 
+
   return (
 
     <div
@@ -406,9 +454,9 @@ function MapView() {
 
       style={{
 
-        width: "100%",
+        width:"100%",
 
-        height: "100%",
+        height:"100%",
 
       }}
 
