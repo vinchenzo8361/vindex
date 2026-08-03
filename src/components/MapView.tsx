@@ -1,25 +1,38 @@
-import { useEffect, useRef } from "react";
-import maplibregl from "maplibre-gl";
-import { hospitals } from "../data/hospitals.ts";
+import { useEffect, useRef, useState } from "react";
+import * as maplibregl from "maplibre-gl";
+import "maplibre-gl/dist/maplibre-gl.css";
+
+import { hospitals } from "../data/hospitals";
+import { ambulance } from "../data/ambulance";
 
 
 function MapView() {
 
+
   const mapContainer = useRef<HTMLDivElement | null>(null);
+
+
+  const [incidentMarker, setIncidentMarker] =
+    useState<maplibregl.Marker | null>(null);
+
 
 
   useEffect(() => {
 
+
     if (!mapContainer.current) return;
+
 
 
     const map = new maplibregl.Map({
 
       container: mapContainer.current,
 
+
       style: {
 
         version: 8,
+
 
         sources: {
 
@@ -59,6 +72,7 @@ function MapView() {
 
       zoom: 11,
 
+
     });
 
 
@@ -70,9 +84,15 @@ function MapView() {
 
 
 
+
+    // HOSPITAL MARKERS
+
     hospitals.forEach((hospital) => {
 
-      const markerElement = document.createElement("div");
+
+      const markerElement =
+        document.createElement("div");
+
 
 
       markerElement.style.width = "36px";
@@ -88,12 +108,9 @@ function MapView() {
           : "#3E8BFF";
 
 
+
       markerElement.style.border =
         "2px solid white";
-
-
-      markerElement.style.boxShadow =
-        "0 0 10px rgba(0,0,0,0.5)";
 
 
       markerElement.innerHTML = "H";
@@ -101,9 +118,9 @@ function MapView() {
 
       markerElement.style.color = "white";
 
-      markerElement.style.fontSize = "22px";
-
       markerElement.style.fontWeight = "bold";
+
+      markerElement.style.fontSize = "20px";
 
 
       markerElement.style.display = "flex";
@@ -112,8 +129,6 @@ function MapView() {
 
       markerElement.style.justifyContent = "center";
 
-
-      markerElement.style.cursor = "pointer";
 
 
 
@@ -124,26 +139,28 @@ function MapView() {
       })
 
       .setHTML(`
+
         <div style="
-            color: #111827;
-            font-family: Arial, sans-serif;
-            line-height: 1.5;
+          color:#111827;
+          font-family:Arial;
         ">
-            <strong style="
-                font-size: 15px;
-            ">
-                ${hospital.name}
-            </strong>
+
+        <strong>
+          ${hospital.name}
+        </strong>
+
         <br/>
-        <span>
-            ${hospital.address}
-        </span>
+
+        ${hospital.address}
+
         <br/>
-        <span>
-            Emergency Department: Yes
-        </span>
+
+        Emergency Department: Yes
+
         </div>
-    `);
+
+      `);
+
 
 
       new maplibregl.Marker({
@@ -168,6 +185,199 @@ function MapView() {
     });
 
 
+
+
+
+
+    // AMBULANCE MARKER
+
+
+    const ambulanceElement =
+      document.createElement("div");
+
+
+
+    ambulanceElement.style.width = "42px";
+
+    ambulanceElement.style.height = "30px";
+
+
+    ambulanceElement.style.backgroundColor =
+      "white";
+
+
+    ambulanceElement.style.border =
+      "2px solid #C83A3A";
+
+
+    ambulanceElement.style.borderRadius =
+      "6px";
+
+
+    ambulanceElement.innerHTML =
+      "🚑";
+
+
+
+    ambulanceElement.style.fontSize =
+      "24px";
+
+
+
+    const ambulancePopup =
+      new maplibregl.Popup({
+
+        offset: 25
+
+      })
+
+      .setHTML(`
+
+        <div style="
+          color:#111827;
+          font-family:Arial;
+        ">
+
+        <strong>
+          Vindex Ambulance 01
+        </strong>
+
+        <br/>
+
+        Status: Idle
+
+        </div>
+
+      `);
+
+
+
+
+    new maplibregl.Marker({
+
+      element: ambulanceElement
+
+    })
+
+    .setLngLat([
+
+      ambulance.longitude,
+
+      ambulance.latitude
+
+    ])
+
+    .setPopup(ambulancePopup)
+
+    .addTo(map);
+
+
+
+
+
+
+
+    // INCIDENT PLACEMENT
+
+
+    map.on("click", (event) => {
+
+
+
+      if (incidentMarker) {
+
+        incidentMarker.remove();
+
+      }
+
+
+
+      const incidentElement =
+        document.createElement("div");
+
+
+
+      incidentElement.style.width = "32px";
+
+      incidentElement.style.height = "32px";
+
+
+      incidentElement.style.backgroundColor =
+        "#C83A3A";
+
+
+      incidentElement.style.border =
+        "3px solid white";
+
+
+      incidentElement.style.borderRadius =
+        "50%";
+
+
+
+      incidentElement.innerHTML = "!";
+
+
+
+      incidentElement.style.color =
+        "white";
+
+
+      incidentElement.style.fontWeight =
+        "bold";
+
+
+      incidentElement.style.display =
+        "flex";
+
+
+      incidentElement.style.alignItems =
+        "center";
+
+
+      incidentElement.style.justifyContent =
+        "center";
+
+
+
+
+      const marker =
+        new maplibregl.Marker({
+
+          element: incidentElement
+
+        })
+
+        .setLngLat(event.lngLat)
+
+        .setPopup(
+
+          new maplibregl.Popup({
+
+            offset: 25
+
+          })
+
+          .setText(
+            "Emergency Incident"
+          )
+
+        )
+
+        .addTo(map);
+
+
+
+      setIncidentMarker(marker);
+
+
+
+    });
+
+
+
+
+
     return () => {
 
       map.remove();
@@ -175,7 +385,10 @@ function MapView() {
     };
 
 
+
   }, []);
+
+
 
 
 
@@ -197,7 +410,9 @@ function MapView() {
 
   );
 
+
 }
+
 
 
 export default MapView;
