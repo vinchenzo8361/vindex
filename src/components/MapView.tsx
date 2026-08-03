@@ -1,9 +1,15 @@
 import { useEffect, useRef, useState } from "react";
 import * as maplibregl from "maplibre-gl";
+import { setWorkerUrl } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 
 import { hospitals } from "../data/hospitals";
 import { ambulance } from "../data/ambulance";
+
+
+setWorkerUrl(
+  "https://cdn.jsdelivr.net/npm/maplibre-gl@6.0.0/dist/maplibre-gl-worker.mjs"
+);
 
 
 function MapView() {
